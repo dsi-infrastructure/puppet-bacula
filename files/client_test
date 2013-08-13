@@ -1,0 +1,65 @@
+Client {
+  Name = fic.test-fd
+  Password = totototo
+  Address = 127.0.0.1
+  FDPort = 9102
+  Catalog = MyCatalog
+  File Retention = 14 days
+  Job Retention = 14 days
+}
+
+FileSet {
+  Name = "fic.test-fs"
+  Include {
+        File = /var/spool/samba/travail/
+    Options {
+    }
+  }
+  Exclude {
+        File = /var/spool/samba/travail/Corbeille.7jours
+  }
+}
+
+Storage {
+  Name = nas.test-sd
+  Password = totototototo 
+  Address = 127.0.0.1
+  SDPort = 9103
+  Device = fic.test-sddevice
+  Media Type = File
+}
+
+Job {
+  Name = fic.test-SAUVEGARDE
+  Type = Backup
+  Level = Incremental
+  Client = fic.test-fd
+  FileSet = "fic.test-fs"
+  Schedule = Rotation
+  Storage = nas.test-sd
+  Pool = fic.test-pool1
+  Messages = Standard
+}
+
+Pool {
+  Name = fic.test-pool1
+  Maximum Volume Jobs = 1
+  LabelFormat = "BACULA_"
+  Pool Type = Backup
+  Volume Retention = 14 days
+  Maximum Volumes = 14
+  Recycle = yes
+  AutoPrune = yes
+}
+
+Job {
+  Name = "fic.test.RestoreFiles"
+  Type = Restore
+  Client= fic.test-fd
+  FileSet= fic.test-fs
+  Storage = nas.test-sd
+  Pool = fic.test-pool1
+  Messages = Standard
+  Where = /data/restore
+}
+

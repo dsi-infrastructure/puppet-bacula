@@ -1,0 +1,75 @@
+Director {       
+  Name = <%= hostname %>-dir
+  DIRport = 9101             
+  QueryFile = "/etc/bacula/scripts/query.sql"
+  WorkingDirectory = "/var/lib/bacula"
+  PidDirectory = "/var/run/bacula"
+  Maximum Concurrent Jobs = 20
+  Password = <%= bacula_password_dir %> 
+  Messages = Standard
+}
+
+Schedule {
+        Name = Rotation-mois
+        Run = Full 1st sun at 1:00
+        Run = Differential 2nd-5th sun at 1:00
+        Run = Incremental mon-sat at 1:00
+}
+
+Schedule {
+  Name = Rotation
+  Run = Level=Full  fri at 18:00
+  Run = Level=Incremental mon-thu  at 21:00
+}
+
+Schedule {
+  Name = Rotation_2
+  Run = Level=Full fri at 18:00
+  Run = Level=Incremental mon-thu  at 20:00
+}
+
+Schedule {
+  Name = Rotation2
+  Run = Level=Full mon at 18:00
+  Run = Level=Incremental incremental tue-fri  at 18:00
+}
+
+Schedule {
+  Name = "RotationArc"
+  Run = Full 1st fri at 18:00
+  Run = Differential 2nd-5th fri at 18:00
+  Run = Incremental mon-thu at 18:00
+}
+
+Console {
+  Name = <%= hostname %>-mon
+  Password = <%= bacula_password_dir %> 
+ CommandACL = status, .status
+}
+
+Catalog {
+ Name = MyCatalog
+ dbname = <%= bacula_db_name_dir %>; DB Address = "" ;  dbuser = <%= bacula_db_user_dir %> ; dbpassword = "<%= bacula_db_password_dir %>"
+}
+
+Messages {
+  Name = Standard
+  mailcommand = "/usr/lib/bacula/bsmtp -h localhost -f \"\(Bacula\) \<%r\>\" -s \"Bacula: %t %e of %c %l\" %r"
+  operatorcommand = "/usr/lib/bacula/bsmtp -h localhost -f \"\(Bacula\) \<%r\>\" -s \"Bacula: Intervention needed for %j\" %r"
+  mail = toto@toto.com = all
+  MailOnError = alerte.toto@toto.com = all, !skipped, !terminate
+  operator = alerte.toto@toto.com = mount
+  console = all, !skipped, !saved
+  append = "/var/lib/bacula/log" = all, !skipped
+  catalog = all, !skipped, !saved
+}
+
+Messages {
+  Name = Daemon
+  mailcommand = "/usr/lib/bacula/bsmtp -h localhost -f \"\(Bacula\) \<%r\>\" -s \"Bacula daemon message\" %r"
+  mail = root@localhost = all, !skipped
+  console = all, !skipped, !saved
+  append = "/var/lib/bacula/log" = all, !skipped
+}
+
+@|"sh -c 'for f in /etc/bacula/clients/* ; do echo @${f} ; done'"

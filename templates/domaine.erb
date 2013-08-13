@@ -1,0 +1,64 @@
+Client {
+  Name = fic.<%= domaine %>-fd
+  Password = <%= bacula_password_fd %>
+  Address = <%= ipaddress_eth1 %>
+  FDPort = 9102
+  Catalog = MyCatalog
+  File Retention = 14 days
+  Job Retention = 14 days
+}
+
+FileSet {
+  Name = "fic.<%= domaine %>-fs"
+  Include {
+        File = /var/spool/samba/travail/
+    Options {
+    }
+  }
+  Exclude {
+        File = /var/spool/samba/travail/Corbeille.7jours
+  }
+}
+
+Storage {
+  Name = nas.<%= domaine %>-sd
+  Password = <%= bacula_password_sd %>
+  Address = <%= ipaddress_eth1 %>
+  SDPort = 9103
+  Device = fic.<%= domaine %>-sddevice
+  Media Type = File
+}
+
+Job {
+  Name = fic.<%= domaine %>-SAUVEGARDE
+  Type = Backup
+  Level = Incremental
+  Client = fic.<%= domaine %>-fd
+  FileSet = "fic.<%= domaine %>-fs"
+  Schedule = Rotation
+  Storage = nas.<%= domaine %>-sd
+  Pool = fic.<%= domaine %>-pool1
+  Messages = Standard
+}
+
+Pool {
+  Name = fic.<%= domaine %>-pool1
+  Maximum Volume Jobs = 1
+  LabelFormat = "BACULA_"
+  Pool Type = Backup
+  Volume Retention = 14 days
+  Maximum Volumes = 14
+  Recycle = yes
+  AutoPrune = yes
+}
+
+Job {
+  Name = "fic.<%= domaine %>.RestoreFiles"
+  Type = Restore
+  Client= fic.<%= domaine %>-fd
+  FileSet= fic.<%= domaine %>-fs
+  Storage = nas.<%= domaine %>-sd
+  Pool = fic.<%= domaine %>-pool1
+  Messages = Standard
+  Where = /data/restore
+}

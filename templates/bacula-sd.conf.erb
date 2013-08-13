@@ -1,0 +1,29 @@
+Storage {                             # definition of myself
+  Name = nas.<%= domaine %>-sd
+  SDPort = 9103                  # Director's port
+  WorkingDirectory = "/var/lib/bacula"
+  Pid Directory = "/var/run/bacula"
+  Maximum Concurrent Jobs = 20
+}
+
+Director {
+  Name = bacula-dir
+  Password = <%= bacula_password_sd %>
+}
+
+Messages {
+  Name = Standard
+  director = <%= hostname %>-dir = all
+}
+
+Device {
+  Name = fic.<%= domaine %>-sddevice
+  Archive Device = /mnt/fic.<%= domaine %>
+  Media Type = File
+  LabelMedia = yes
+  Random Access = yes
+  AutomaticMount = yes
+  RemovableMedia = no
+  AlwaysOpen = no
+}
+

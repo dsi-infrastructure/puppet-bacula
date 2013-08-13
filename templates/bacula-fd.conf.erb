@@ -1,0 +1,18 @@
+Director {
+  Name = bacula-dir
+  Password = <%= bacula_password_fd %>
+
+}
+
+FileDaemon {                          # this is me
+  Name = fic.<%= domaine %>-fd
+  FDport = 9102                  # where we listen for the director
+  WorkingDirectory = /var/lib/bacula
+  Pid Directory = /var/run/bacula
+  Maximum Concurrent Jobs = 20
+}
+
+Messages {
+  Name = Standard
+  director = bacula-dir = all, !skipped, !restored
+}
