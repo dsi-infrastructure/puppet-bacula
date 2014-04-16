@@ -1,7 +1,7 @@
 Client {
   Name = fic.<%= domaine %>-fd
   Password = <%= bacula_password_fd %>
-  Address = <%= ipaddress_eth1 %>
+  Address = <%= ipaddress_eth0 %>
   FDPort = 9102
   Catalog = MyCatalog
   File Retention = 14 days
@@ -23,7 +23,7 @@ FileSet {
 Storage {
   Name = nas.<%= domaine %>-sd
   Password = <%= bacula_password_sd %>
-  Address = <%= ipaddress_eth1 %>
+  Address = <%= ipaddress_eth0 %>
   SDPort = 9103
   Device = fic.<%= domaine %>-sddevice
   Media Type = File
