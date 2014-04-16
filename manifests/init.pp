@@ -4,6 +4,7 @@
 class bacula(
     $bacula_client           = hiera('bacula::bacula_client'),
     $bacula_server           = hiera('bacula::bacula_server'),
+    $domaine                 = hiera('bacula::domaine'),
     $bacula_password_fd      = hiera('bacula::bacula_password_fd'),
     $bacula_password_sd      = hiera('bacula::bacula_password_sd'),
     $bacula_db_name_dir      = hiera('bacula::bacula_db_name_dir'),
